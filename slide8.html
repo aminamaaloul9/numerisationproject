@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide 8 - Dimensions de la couleur</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(120deg,#e0f7fa,#a5d6a7);
+    color:#000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    height:100vh;
+}
+
+.slide{
+    width:95%;
+    height:94%;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    align-items:center;
+}
+
+h1{
+    font-size:2.8em;
+    text-align:center;
+}
+
+.subtitle{
+    text-align:center;
+    font-size:1.3em;
+    opacity:0.9;
+    margin-bottom:12px;
+}
+
+.image-container{
+    position:relative;
+    margin:20px 0;
+}
+
+#demoImage{
+    max-width:80vw;
+    max-height:50vh;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    transition:0.1s;
+}
+
+.sliders{
+    display:flex;
+    justify-content:space-around;
+    width:90%;
+    margin:15px 0;
+    gap:15px;
+}
+
+.slider-box{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.slider-box input{
+    width:180px;
+}
+
+.slider-box label{
+    margin-bottom:6px;
+    font-weight:600;
+}
+
+.footer{
+    text-align:center;
+    font-size:1.05em;
+    opacity:0.85;
+    margin-top:8px;
+}
+
+/* Bouton navigation */
+.next-btn{
+    margin:15px auto 5px;
+    padding:12px 30px;
+    border:none;
+    border-radius:30px;
+    background:#00796b;
+    color:white;
+    font-size:1.1em;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.next-btn:hover{
+    background:#004d40;
+    transform:scale(1.05);
+}
+</style>
+</head>
+<body>
+
+<div class="slide">
+
+    <h1>🎨 Les trois dimensions de la couleur</h1>
+    <div class="subtitle">
+        Teinte, Luminosité et Saturation appliquées à une image
+    </div>
+
+    <div class="image-container">
+        <img id="demoImage" src="img2.jpg" alt="Demo Image">
+    </div>
+
+    <div class="sliders">
+        <div class="slider-box">
+            <label for="hue">Hue (Teinte)</label>
+            <input type="range" id="hue" min="0" max="360" value="0">
+        </div>
+        <div class="slider-box">
+            <label for="brightness">Luminosité (Value)</label>
+            <input type="range" id="brightness" min="0" max="200" value="100">
+        </div>
+        <div class="slider-box">
+            <label for="saturation">Saturation (Chroma)</label>
+            <input type="range" id="saturation" min="0" max="200" value="100">
+        </div>
+    </div>
+
+    <button class="next-btn" onclick="location.href='slide9.html'">
+        suivant 
+    </button>
+
+    <div class="footer">
+        Expérimente avec les sliders pour voir comment la couleur de l’image change 🎨
+    </div>
+
+</div>
+
+<script>
+const img = document.getElementById('demoImage');
+const hueSlider = document.getElementById('hue');
+const brightnessSlider = document.getElementById('brightness');
+const saturationSlider = document.getElementById('saturation');
+
+function updateImage(){
+    const hue = hueSlider.value;
+    const brightness = brightnessSlider.value;
+    const saturation = saturationSlider.value;
+    img.style.filter = `hue-rotate(${hue}deg) brightness(${brightness}%) saturate(${saturation}%)`;
+}
+
+hueSlider.addEventListener('input', updateImage);
+brightnessSlider.addEventListener('input', updateImage);
+saturationSlider.addEventListener('input', updateImage);
+</script>
+
+</body>
+</html>

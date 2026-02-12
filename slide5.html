@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audio Lab – Fréquences</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:radial-gradient(circle,#0f2027,#203a43,#000);
+    color:white;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+}
+
+.slide{
+    width:95%;
+    height:92%;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+h1{
+    text-align:center;
+    font-size:2.7em;
+    letter-spacing:1px;
+}
+
+.lab{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:30px;
+    height:70%;
+}
+
+.panel{
+    background:rgba(255,255,255,0.06);
+    border-radius:22px;
+    padding:25px;
+    backdrop-filter:blur(10px);
+}
+
+canvas{
+    width:100%;
+    height:100%;
+    border-radius:15px;
+    background:black;
+}
+
+.control{
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+}
+
+input[type=range]{
+    width:100%;
+}
+
+.freq-display{
+    font-size:2em;
+    text-align:center;
+    color:#00e676;
+}
+
+button{
+    padding:15px;
+    border:none;
+    border-radius:25px;
+    background:#00e676;
+    color:#003;
+    font-size:1.1em;
+    cursor:pointer;
+}
+
+.note{
+    text-align:center;
+    opacity:0.8;
+}
+/* Bouton */
+.nav-btn{
+    padding:12px 28px;
+    font-size:1.2em;
+    border:none;
+    background:#004d40;
+    color:white;
+    border-radius:10px;
+    cursor:pointer;
+    text-decoration:none;
+    animation:pulse 2s infinite;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="slide">
+
+<h1>🎧 Laboratoire interactif des fréquences</h1>
+
+<div class="lab">
+
+<!-- Zone spectre -->
+<div class="panel">
+    <canvas id="visualizer"></canvas>
+</div>
+
+<!-- Zone contrôle -->
+<div class="panel control">
+
+    <div class="freq-display" id="freqText">440 Hz</div>
+
+    <input type="range" min="20" max="20000" value="440" id="freqSlider">
+
+    <button id="playBtn">▶ Activer le son</button>
+
+    <div class="note">
+        Zone audible : 20 Hz – 20 kHz<br>
+        Teste les graves, médiums et aigus 🎼
+    </div>
+
+</div>
+
+</div>
+<a href="code-son.html" class="nav-btn">Suivant </a>
+</div>
+
+<script>
+let audioCtx;
+let oscillator;
+let analyser;
+let dataArray;
+let canvas = document.getElementById("visualizer");
+let ctx = canvas.getContext("2d");
+
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
+
+const slider = document.getElementById("freqSlider");
+const freqText = document.getElementById("freqText");
+const playBtn = document.getElementById("playBtn");
+
+let playing = false;
+
+playBtn.onclick = () => {
+
+    if(!audioCtx){
+        audioCtx = new AudioContext();
+        oscillator = audioCtx.createOscillator();
+        analyser = audioCtx.createAnalyser();
+
+        oscillator.type = "sine";
+        oscillator.frequency.value = slider.value;
+
+        oscillator.connect(analyser);
+        analyser.connect(audioCtx.destination);
+
+        analyser.fftSize = 256;
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+        oscillator.start();
+        draw();
+    }
+
+    playing = !playing;
+    audioCtx.resume();
+
+    playBtn.textContent = playing ? "⏸ Pause" : "▶ Activer le son";
+
+    if(!playing){
+        audioCtx.suspend();
+    }
+}
+
+slider.oninput = () => {
+    freqText.textContent = slider.value + " Hz";
+    if(oscillator){
+        oscillator.frequency.value = slider.value;
+    }
+}
+
+function draw(){
+    requestAnimationFrame(draw);
+
+    analyser.getByteFrequencyData(dataArray);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    let barWidth = canvas.width / dataArray.length;
+
+    for(let i=0;i<dataArray.length;i++){
+        let barHeight = dataArray[i];
+        ctx.fillStyle = `rgb(${barHeight+100},200,120)`;
+        ctx.fillRect(i*barWidth,canvas.height-barHeight,barWidth-1,barHeight);
+    }
+}
+</script>
+
+</body>
+</html>

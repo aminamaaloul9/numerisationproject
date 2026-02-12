@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You Slide</title>
+
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(120deg,#e0f7fa,#a5d6a7);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    color:white;
+}
+
+h1{
+    font-size:5em;
+    text-align:center;
+    text-shadow: 0 0 10px #080101, 0 0 20px #00bcd4, 0 0 30px #4caf50;
+    animation:glow 2s ease-in-out infinite alternate, bounce 2s infinite;
+}
+
+@keyframes glow{
+    0%{ text-shadow:0 0 10px #fff,0 0 20px #00bcd4,0 0 30px #4caf50;}
+    50%{ text-shadow:0 0 20px #fff,0 0 40px #00bcd4,0 0 60px #4caf50;}
+    100%{ text-shadow:0 0 10px #fff,0 0 20px #00bcd4,0 0 30px #4caf50;}
+}
+
+@keyframes bounce{
+    0%, 100%{ transform: translateY(0);}
+    50%{ transform: translateY(-20px);}
+}
+
+/* Particules dynamiques */
+.particle{
+    position:absolute;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.8);
+    animation:move 5s linear infinite;
+}
+
+@keyframes move{
+    0%{ transform: translateY(0) translateX(0) scale(1);}
+    50%{ transform: translateY(-300px) translateX(50px) scale(1.2);}
+    100%{ transform: translateY(600px) translateX(-100px) scale(0.8);}
+}
+
+/* Bouton replay */
+.replay-btn{
+    position:absolute;
+    bottom:30px;
+    padding:12px 30px;
+    border:none;
+    border-radius:25px;
+    background:#00796b;
+    color:white;
+    font-size:1.2em;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.replay-btn:hover{
+    background:#004d40;
+    transform:scale(1.05);
+}
+</style>
+</head>
+<body>
+
+<h1>Merci ! 🎉</h1>
+
+<!-- Particules dynamiques -->
+<script>
+const colors = ['#ffffff','#00bcd4','#4caf50','#cddc39','#ffeb3b'];
+for(let i=0;i<30;i++){
+    let p = document.createElement('div');
+    p.classList.add('particle');
+    p.style.left = Math.random()*window.innerWidth + 'px';
+    p.style.top = Math.random()*window.innerHeight + 'px';
+    p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+    p.style.width = (5+Math.random()*10)+'px';
+    p.style.height = p.style.width;
+    p.style.animationDuration = (3+Math.random()*5)+'s';
+    document.body.appendChild(p);
+}
+</script>
+
+<button class="replay-btn" onclick="location.href='index.html'">Rejouer la présentation</button>
+
+</body>
+</html>

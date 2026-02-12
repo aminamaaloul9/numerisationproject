@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide 3 - Le Son avec Oscillation</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(120deg, #e0f7fa, #a5d6a7);
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .slide {
+    width: 80%;
+    max-width: 1000px;
+    height: 80%;
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+  }
+
+  h1 {
+    font-size: 2.8em;
+    color: #004d40;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .card {
+    width: 100%;
+    background: #d2eee4;
+    border-radius: 15px;
+    padding: 20px 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  }
+
+  .icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  /* Oscillation SVG */
+    svg {
+    position: absolute;
+    width: 100%;
+    height: 100px;
+    top: 30px; /* distance from the top of the card */
+    }
+  path {
+    fill: none;
+    stroke: #004d40;
+    stroke-width: 2;
+  }
+
+  .card p {
+    font-size: 1.3em;
+    line-height: 1.6;
+    z-index: 1;
+    position: relative;
+  }
+
+  /* Bouton suivant */
+  .nav-btn {
+    margin-top: 20px;
+    padding: 12px 25px;
+    font-size: 1.3em;
+    color: white;
+    background-color: #004d40;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  .corner {
+  position: fixed;
+  width: 250px; /* taille de l'image */
+  height: 250px;
+  object-fit: contain;
+  opacity: 0.8; /* un peu transparent pour ne pas gêner le texte */
+  animation: float 6s ease-in-out infinite; /* flotter un peu comme les emojis */
+}
+
+.top-left { top: 10px; left: 0px; }
+.top-right { top: 10px; right: 0px; }
+.bottom-left { bottom: 10px; left: 10px; }
+.bottom-right { bottom: 10px; right: 10px; }
+
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(10deg); }
+  100% { transform: translateY(0px) rotate(-10deg); }
+}
+
+</style>
+</head>
+<body>
+
+<div class="slide">
+  <h1>Le Son : Une vibration transformée en signal</h1>
+
+  <div class="card">
+    <svg viewBox="0 0 600 100">
+      <path id="wave" d="M0,50 Q50,50 100,50 T200,50 T300,50 T400,50 T500,50 T600,50"></path>
+    </svg>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <p>
+      Le son est l'un des signaux analogiques les plus fondamentaux de notre environnement. Il est le résultat d'une vibration de l'air qui se propage sous forme d'ondes. Lorsque ces ondes atteignent notre oreille, elles font vibrer le tympan, qui à son tour, transmet ces vibrations à l'oreille interne.
+    </p>
+    <p>
+      Que ce soit l'oreille humaine ou un microphone, le principe est le même : ces vibrations mécaniques sont converties en un signal électrique analogique. C'est cette conversion qui nous permet d'entendre la musique, les voix, et tous les bruits qui nous entourent, ou de les enregistrer pour une utilisation multimédia.
+    </p>
+  </div>
+    <!-- Dans le <body> de ta slide -->
+    <img src="image1.png" class="corner top-left">
+    <img src="image2.png" class="corner top-right">
+    <img src="image3.png" class="corner bottom-left">
+    <img src="image4.png" class="corner bottom-right">
+
+  <a href="slide4.html" class="nav-btn">Suivant</a>
+</div>
+
+<script>
+  const path = document.getElementById('wave');
+
+  let t = 0;
+  function animateWave() {
+    let d = "M0,50 ";
+    for(let x=0;x<=600;x+=10){
+      let y = 50 + 20*Math.sin((x+t)/20);
+      d += "L"+x+","+y+" ";
+    }
+    path.setAttribute('d', d);
+    t+=2;
+    requestAnimationFrame(animateWave);
+  }
+  animateWave();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide 4 - Caractéristiques du son</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(120deg,#e0f7fa,#a5d6a7);
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.slide{
+    width:95%;
+    height:90%;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    align-items:center;
+}
+
+h1{
+    font-size:2.8em;
+    color:#004d40;
+    text-shadow:2px 2px 10px rgba(0,0,0,0.2);
+}
+
+.container{
+    display:flex;
+    width:100%;
+    height:70%;
+    gap:20px;
+}
+
+.card{
+    flex:1;
+    background:rgba(255,255,255,0.92);
+    border-radius:18px;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 6px 15px rgba(0,0,0,0.15);
+    transition:0.3s;
+    position:relative;
+    overflow:hidden;
+}
+
+.card:hover{
+    transform:translateY(-8px) scale(1.03);
+    box-shadow:0 12px 25px rgba(0,0,0,0.25);
+}
+
+.icon{
+    font-size:3em;
+    margin-bottom:10px;
+    animation:float 2s infinite ease-in-out alternate;
+}
+
+@keyframes float{
+    0%{transform:translateY(0);}
+    100%{transform:translateY(-10px);}
+}
+
+.card h2{
+    font-size:1.5em;
+    color:#004d40;
+}
+
+.card p{
+    font-size:1.1em;
+    line-height:1.5;
+}
+
+/* Oscillation visuelle */
+.wave{
+    position:absolute;
+    bottom:10px;
+    left:0;
+    width:100%;
+    height:60px;
+    opacity:0.5;
+}
+
+/* Bouton */
+.nav-btn{
+    padding:12px 28px;
+    font-size:1.2em;
+    border:none;
+    background:#004d40;
+    color:white;
+    border-radius:10px;
+    cursor:pointer;
+    text-decoration:none;
+    animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.07);}
+}
+
+/* Coins décoratifs */
+.corner{
+    position:fixed;
+    width:100px;
+    opacity:0.85;
+    animation:float 5s infinite ease-in-out alternate;
+    z-index:100;
+}
+
+.top-left{top:10px; left:10px;}
+.top-right{top:10px; right:10px;}
+.bottom-left{bottom:10px; left:10px;}
+.bottom-right{bottom:10px; right:10px;}
+</style>
+</head>
+
+<body>
+
+<!-- Images coins écran -->
+<img src="image4.png" class="corner top-left">
+<img src="image1.png" class="corner top-right">
+<img src="image2.png" class="corner bottom-left">
+<img src="image3.png" class="corner bottom-right">
+
+<div class="slide">
+
+<h1>Les caractéristiques distinctives d’un son</h1>
+
+<div class="container">
+
+<!-- Hauteur -->
+<div class="card">
+    <div class="icon">🎵</div>
+    <h2>Hauteur / Ton</h2>
+    <p>
+        La hauteur d'un son est directement liée à sa fréquence, mesurée en Hertz (Hz). Une fréquence élevée correspond à un son aigu, tandis qu'une fréquence basse produit un son grave. C'est ce qui nous permet de distinguer les notes de musique
+    </p>
+    <svg class="wave" viewBox="0 0 400 100">
+        <path id="wave1" stroke="#004d40" stroke-width="3" fill="none"/>
+    </svg>
+</div>
+
+<!-- Intensité -->
+<div class="card">
+    <div class="icon">🔊</div>
+    <h2>Intensité</h2>
+    <p>
+        L'intensité du son est déterminée par l'amplitude de l'onde sonore, que nous percevons comme le volume. Plus l'amplitude est grande, plus le son est fort, et inversement.
+    </p>
+    <svg class="wave" viewBox="0 0 400 100">
+        <path id="wave2" stroke="#004d40" stroke-width="3" fill="none"/>
+    </svg>
+</div>
+
+<!-- Timbre -->
+<div class="card">
+    <div class="icon">🎼</div>
+    <h2>Timbre</h2>
+    <p>
+        Le timbre est la caractéristique la plus complexe et la plus riche d'un son. Il est défini par le spectre harmonique – l'ensemble des fréquences secondaires qui accompagnent la fréquence fondamentale. C'est le timbre qui nous permet de distinguer une flûte d'un violon jouant la même note à la même intensité.
+    </p>
+    <svg class="wave" viewBox="0 0 400 100">
+        <path id="wave3" stroke="#004d40" stroke-width="3" fill="none"/>
+    </svg>
+</div>
+
+<!-- Durée -->
+<div class="card">
+    <div class="icon">⏳</div>
+    <h2>Durée</h2>
+    <p>
+        La durée d'un son correspond simplement au temps pendant lequel son énergie est perceptible. Elle est fondamentale pour le rythme et la mélodie dans la musique, et pour la compréhension de la parole.
+    </p>
+    <svg class="wave" viewBox="0 0 400 100">
+        <path id="wave4" stroke="#004d40" stroke-width="3" fill="none"/>
+    </svg>
+</div>
+
+</div>
+
+<a href="slide5.html" class="nav-btn">Suivant </a>
+
+</div>
+
+<script>
+function animateWave(id, speed, amp){
+    const path=document.getElementById(id);
+    let t=0;
+    function draw(){
+        let d="M0,50 ";
+        for(let x=0;x<=400;x+=8){
+            let y=50+amp*Math.sin((x+t)/20);
+            d+=`L${x},${y} `;
+        }
+        path.setAttribute("d",d);
+        t+=speed;
+        requestAnimationFrame(draw);
+    }
+    draw();
+}
+
+animateWave("wave1",2,15);
+animateWave("wave2",3,25);
+animateWave("wave3",1.5,20);
+animateWave("wave4",1,10);
+</script>
+
+</body>
+</html>

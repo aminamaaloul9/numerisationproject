@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide 7 - Signaux visuels</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(120deg,#e0f7fa,#a5d6a7);
+    color:#000;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.slide{
+    width:95%;
+    height:94%;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+h1{
+    text-align:center;
+    font-size:3em;
+}
+
+.subtitle{
+    text-align:center;
+    font-size:1.4em;
+    opacity:0.9;
+    margin-bottom:10px;
+}
+
+.content{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:25px;
+    flex:1;
+    align-items:center;
+}
+
+.box{
+    background:rgba(255,255,255,0.75);
+    border-radius:20px;
+    padding:28px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.15);
+}
+
+.box h2{
+    font-size:1.9em;
+    margin-bottom:12px;
+    color:#00796b;
+}
+
+.box p{
+    font-size:1.15em;
+    line-height:1.6;
+}
+
+/* Spectre */
+.spectrum-container{
+    margin-top:10px;
+    text-align:center;
+}
+
+.spectrum-title{
+    font-size:1.3em;
+    margin-bottom:6px;
+    font-weight:600;
+}
+
+.spectrum-wrapper{
+    position:relative;
+    width:80%;
+    margin:0 auto;
+}
+
+.spectrum{
+    height:36px;
+    border-radius:25px;
+    background:linear-gradient(to right,
+        violet, indigo, blue, cyan, green, yellow, orange, red);
+    animation:move 8s linear infinite alternate;
+    box-shadow:0 5px 15px rgba(0,0,0,0.25);
+}
+
+@keyframes move{
+    from{filter:hue-rotate(0deg);}
+    to{filter:hue-rotate(30deg);}
+}
+
+.tooltip{
+    position:absolute;
+    top:-45px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#00796b;
+    color:white;
+    padding:6px 12px;
+    border-radius:15px;
+    font-size:0.9em;
+    display:none;
+    pointer-events:none;
+}
+
+.spectrum-wrapper:hover .tooltip{
+    display:block;
+}
+
+.spectrum-scale{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.9em;
+    margin-top:6px;
+}
+
+/* Bouton navigation */
+.next-btn{
+    margin:15px auto 5px;
+    padding:14px 35px;
+    border:none;
+    border-radius:30px;
+    background:#00796b;
+    color:white;
+    font-size:1.1em;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.next-btn:hover{
+    background:#004d40;
+    transform:scale(1.05);
+}
+
+.footer{
+    text-align:center;
+    font-size:1.05em;
+    opacity:0.85;
+}
+</style>
+</head>
+
+<body>
+
+<div class="slide">
+
+    <h1>👁️ Signaux visuels : La Lumière et la perception oculaire</h1>
+    <div class="subtitle">
+        De l’onde électromagnétique à l’image perçue par le cerveau
+    </div>
+
+    <div class="content">
+
+        <div class="box">
+            <h2>🌈 Lumière & spectre électromagnétique</h2>
+            <p>
+                La lumière est une onde électromagnétique. L’œil humain ne perçoit
+                qu’une petite bande appelée lumière visible.
+            </p>
+            <p>
+                Cette bande s’étend du violet au rouge, soit approximativement de
+                400 nm à 700 nm.
+            </p>
+        </div>
+
+        <div class="box">
+            <h2>👁️ Fonctionnement de l’œil</h2>
+            <p>
+                Les bâtonnets et cônes transforment l’énergie lumineuse en signaux
+                électriques transmis au cerveau par le nerf optique.
+            </p>
+            <p>
+                Ce mécanisme permet la perception des formes, couleurs et mouvements.
+            </p>
+        </div>
+
+        <div class="box">
+            <h2>🖼️ Rôle en multimédia</h2>
+            <p>
+                Comprendre ce processus est essentiel pour la capture, le traitement
+                et l’affichage des images et vidéos numériques.
+            </p>
+            <p>
+                Il garantit un rendu fidèle des couleurs et un confort visuel optimal.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="spectrum-container">
+        <div class="spectrum-title">🌈 Spectre visible</div>
+
+        <div class="spectrum-wrapper">
+            <div class="tooltip">400 nm → 700 nm</div>
+            <div class="spectrum"></div>
+        </div>
+
+        <div class="spectrum-scale">
+            <span>400 nm (Violet)</span>
+            <span>700 nm (Rouge)</span>
+        </div>
+    </div>
+
+    <button class="next-btn" onclick="location.href='slide8.html'">
+        suivant
+    </button>
+
+    <div class="footer">
+        La vision humaine est au cœur des technologies visuelles modernes 🎥
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Oscilloscope Audio Temps Réel</title>
+
+<style>
+body{
+    margin:0;
+    background:radial-gradient(circle at top,#0a2a33,#000);
+    font-family:'Segoe UI',sans-serif;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    overflow:hidden;
+}
+
+/* Fond animé léger */
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:
+      radial-gradient(circle at 20% 20%,rgba(0,255,255,.08),transparent 40%),
+      radial-gradient(circle at 80% 60%,rgba(0,255,150,.08),transparent 40%);
+    animation: bgMove 12s infinite alternate linear;
+    z-index:-1;
+}
+@keyframes bgMove{
+    from{ transform:translateY(0); }
+    to{ transform:translateY(-40px); }
+}
+
+.panel{
+    width:900px;
+    background:rgba(255,255,255,0.06);
+    border-radius:22px;
+    padding:28px;
+    box-shadow:0 0 40px rgba(0,255,255,0.6);
+    backdrop-filter: blur(6px);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:10px;
+    font-size:2.5em;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:15px;
+    background:linear-gradient(45deg,#00e5ff,#1de9b6);
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-bottom:15px;
+    transition:.3s;
+}
+
+button:hover{ transform:scale(1.05); }
+
+button:disabled{
+    background:#555;
+    box-shadow:none;
+}
+
+.control{
+    margin:12px 0;
+}
+
+label{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:5px;
+    font-size:14px;
+}
+
+input, select{
+    width:100%;
+    accent-color:#00e5ff;
+}
+
+canvas{
+    margin-top:18px;
+    background:black;
+    border-radius:15px;
+    box-shadow:0 0 30px rgba(0,255,255,0.7);
+}
+
+.nav-btn{
+    display:block;
+    margin:18px auto 0;
+    width:180px;
+    padding:10px;
+    border-radius:30px;
+    background:linear-gradient(45deg,#ffeb3b,#ff9800);
+    color:black;
+    font-weight:bold;
+    text-decoration:none;
+    text-align:center;
+    box-shadow:0 0 18px rgba(255,200,0,0.9);
+    transition:.3s;
+}
+
+.nav-btn:hover{
+    transform:scale(1.1);
+}
+</style>
+</head>
+
+<body>
+
+<div class="panel">
+<h1>Oscilloscope Audio Temps Réel</h1>
+
+<button id="startBtn">▶ Démarrer le son</button>
+
+<div class="control">
+<label>Fréquence <span id="fVal">440 Hz</span></label>
+<input type="range" id="freq" min="50" max="1000" value="440">
+</div>
+
+<div class="control">
+<label>Intensité <span id="vVal">0.5</span></label>
+<input type="range" id="vol" min="0" max="1" step="0.01" value="0.5">
+</div>
+
+<div class="control">
+<label>Hauteur tonale <span id="pVal">1x</span></label>
+<input type="range" id="pitch" min="0.5" max="2" step="0.01" value="1">
+</div>
+
+<div class="control">
+<label>Timbre</label>
+<select id="wave">
+    <option value="sine">Sinusoïde</option>
+    <option value="square">Carrée</option>
+    <option value="triangle">Triangle</option>
+    <option value="sawtooth">Dent de scie</option>
+</select>
+</div>
+
+<canvas id="scope" width="750" height="350"></canvas>
+<a href="code2-projet.html" class="nav-btn">Suivant </a>
+</div>
+
+<script>
+let audioCtx = null;
+let oscillator = null;
+let gainNode = null;
+let analyser = null;
+let started = false;
+
+const startBtn = document.getElementById("startBtn");
+
+startBtn.onclick = () => {
+    if(started) return;
+
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    oscillator = audioCtx.createOscillator();
+    gainNode = audioCtx.createGain();
+    analyser = audioCtx.createAnalyser();
+
+    oscillator.type = "sine";
+    oscillator.frequency.value = 440;
+    gainNode.gain.value = 0.5;
+
+    oscillator.connect(gainNode);
+    gainNode.connect(analyser);
+    analyser.connect(audioCtx.destination);
+
+    oscillator.start();
+    started = true;
+
+    startBtn.textContent = "✔ Son actif";
+    startBtn.disabled = true;
+
+    draw();
+};
+
+/* CONTROLES TEMPS RÉEL */
+freq.oninput = () => {
+    if(!started) return;
+    oscillator.frequency.setValueAtTime(
+        freq.value * pitch.value,
+        audioCtx.currentTime
+    );
+    fVal.textContent = freq.value + " Hz";
+};
+
+pitch.oninput = () => {
+    if(!started) return;
+    oscillator.frequency.setValueAtTime(
+        freq.value * pitch.value,
+        audioCtx.currentTime
+    );
+    pVal.textContent = pitch.value + "x";
+};
+
+vol.oninput = () => {
+    if(!started) return;
+    gainNode.gain.setValueAtTime(vol.value, audioCtx.currentTime);
+    vVal.textContent = vol.value;
+};
+
+wave.onchange = () => {
+    if(!started) return;
+    oscillator.type = wave.value;
+};
+
+/* OSCILLOSCOPE AGRANDI */
+const canvas = document.getElementById("scope");
+const ctx = canvas.getContext("2d");
+
+function draw(){
+    if(!started) return;
+
+    requestAnimationFrame(draw);
+
+    analyser.fftSize = 2048;
+    const buffer = new Uint8Array(analyser.fftSize);
+    analyser.getByteTimeDomainData(buffer);
+
+    ctx.fillStyle="black";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    ctx.strokeStyle="#00ffff";
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = "#00ffff";
+    ctx.lineWidth=2;
+    ctx.beginPath();
+
+    let slice = canvas.width / buffer.length;
+    let x = 0;
+
+    let zoom = 1.8; // facteur d’agrandissement visuel
+
+    for(let i=0;i<buffer.length;i++){
+        let y = (buffer[i] / 128.0 - 1) * (canvas.height/2) * zoom + canvas.height/2;
+
+        if(i===0) ctx.moveTo(x,y);
+        else ctx.lineTo(x,y);
+
+        x += slice;
+    }
+
+    ctx.stroke();
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>FFT & Synthèse Sonore Pro</title>
+
+<style>
+body{
+    margin:0;
+    background:radial-gradient(circle at top,#0a2a33,#000);
+    font-family:'Segoe UI',sans-serif;
+    color:white;
+    text-align:center;
+    overflow:hidden;
+}
+
+h1{ margin:10px 0 3px; font-size:2.6em; }
+
+.subtitle{ opacity:.85; margin-bottom:10px; }
+
+.controls{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:12px;
+}
+
+.panel{
+    background:rgba(255,255,255,0.07);
+    padding:10px 16px;
+    border-radius:14px;
+    box-shadow:0 0 12px rgba(0,255,255,0.4);
+}
+
+button{
+    padding:7px 15px;
+    border:none;
+    border-radius:20px;
+    font-size:14px;
+    cursor:pointer;
+    font-weight:bold;
+    background:linear-gradient(45deg,#00e5ff,#1de9b6);
+}
+
+button:hover{ transform:scale(1.08); }
+
+input[type=range]{ width:120px; }
+
+canvas{
+    margin:10px auto;
+    background:black;
+    border-radius:15px;
+    box-shadow:0 0 30px rgba(0,255,255,0.6);
+    display:block;
+}
+
+.next-btn{
+    position:fixed;
+    bottom:15px;
+    right:20px;
+    padding:10px 22px;
+    border-radius:30px;
+    font-size:15px;
+    font-weight:bold;
+    background:linear-gradient(45deg,#ffeb3b,#ff9800);
+    box-shadow:0 0 15px rgba(255,200,0,.9);
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎼 Synthèse Sonore & Analyse de Fourier</h1>
+<div class="subtitle">Presets instruments • FFT 3D • Onde animée</div>
+
+<div class="controls">
+
+<div class="panel">
+    <label>🎻 Presets</label><br>
+    <button onclick="setPreset('piano')">Piano</button>
+    <button onclick="setPreset('violin')">Violon</button>
+    <button onclick="setPreset('flute')">Flûte</button>
+    <button onclick="setPreset('guitar')">Guitare</button>
+</div>
+
+<div class="panel">
+    <label>🎵 Note</label><br>
+    <button onclick="setFreq(440)">LA</button>
+    <button onclick="setFreq(264)">DO</button>
+</div>
+
+<div class="panel">
+    <label>🔊 Volume</label><br>
+    <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
+</div>
+
+<div class="panel">
+    <label>🎼 Note détectée</label><br>
+    <div id="note" style="font-size:22px;color:#00e5ff;">—</div>
+</div>
+
+</div>
+
+<canvas id="fft" width="950" height="350"></canvas>
+<canvas id="wave" width="950" height="200"></canvas>
+
+<button class="next-btn" onclick="location.href='slide6.html'">➡ Slide suivante</button>
+
+<script>
+const audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+const analyser = audioCtx.createAnalyser();
+analyser.fftSize=2048;
+
+const master = audioCtx.createGain();
+master.connect(analyser);
+analyser.connect(audioCtx.destination);
+
+let baseFreq=440;
+let oscillators=[];
+
+const presets={
+    piano:[1,0.55,0.3,0.15,0.07],
+    violin:[1,0.9,0.75,0.6,0.45,0.3],
+    flute:[1,0.25,0.08,0.03],
+    guitar:[1,0.6,0.4,0.25,0.15,0.08]
+};
+
+const vol=document.getElementById("volume");
+vol.oninput=()=>master.gain.value=vol.value;
+
+function setFreq(f){ baseFreq=f; buildSound(); }
+
+function setPreset(name){
+    currentPreset=presets[name];
+    buildSound();
+}
+
+let currentPreset=presets.piano;
+
+function buildSound(){
+    oscillators.forEach(o=>o.stop());
+    oscillators=[];
+
+    currentPreset.forEach((amp,i)=>{
+        let osc=audioCtx.createOscillator();
+        let g=audioCtx.createGain();
+        osc.frequency.value=baseFreq*(i+1);
+        osc.type="sine";
+        g.gain.value=amp;
+        osc.connect(g);
+        g.connect(master);
+        osc.start();
+        oscillators.push(osc);
+    });
+}
+
+master.gain.value=vol.value;
+buildSound();
+
+/* ===== FFT ===== */
+const fftCanvas=document.getElementById("fft");
+const fftCtx=fftCanvas.getContext("2d");
+
+/* ===== Onde ===== */
+const waveCanvas=document.getElementById("wave");
+const waveCtx=waveCanvas.getContext("2d");
+
+function detectNote(freq){
+    const notes=["Do","Do#","Ré","Ré#","Mi","Fa","Fa#","Sol","Sol#","La","La#","Si"];
+    const n=Math.round(12*Math.log2(freq/440)+9);
+    return notes[(n+120)%12];
+}
+
+function animate(){
+    requestAnimationFrame(animate);
+
+    const buffer=analyser.frequencyBinCount;
+    const data=new Uint8Array(buffer);
+    analyser.getByteFrequencyData(data);
+
+    fftCtx.fillStyle="rgba(0,0,0,.25)";
+    fftCtx.fillRect(0,0,fftCanvas.width,fftCanvas.height);
+
+    for(let i=0;i<350;i++){
+        const v=data[i];
+        fftCtx.fillStyle=`rgb(${v+60},${200-v/2},255)`;
+        fftCtx.fillRect(i*2.7,fftCanvas.height-v*1.2,2.5,v*1.2);
+    }
+
+    document.getElementById("note").innerText=detectNote(baseFreq);
+
+    const timeData=new Uint8Array(buffer);
+    analyser.getByteTimeDomainData(timeData);
+
+    waveCtx.fillStyle="rgba(0,0,0,.3)";
+    waveCtx.fillRect(0,0,waveCanvas.width,waveCanvas.height);
+
+    waveCtx.beginPath();
+    waveCtx.strokeStyle="#00e5ff";
+    waveCtx.lineWidth=2;
+
+    let angle=Date.now()*0.001;
+
+    for(let i=0;i<timeData.length;i++){
+        const x=i/timeData.length*waveCanvas.width;
+        const y=(timeData[i]-128)*0.8 + waveCanvas.height/2 + Math.sin(angle+i*0.02)*25;
+        i==0?waveCtx.moveTo(x,y):waveCtx.lineTo(x,y);
+    }
+
+    waveCtx.stroke();
+}
+
+animate();
+</script>
+
+</body>
+</html>

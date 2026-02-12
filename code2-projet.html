@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Prisme de Fourier - Décomposition</title>
+
+<style>
+body{
+    background:#111;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+}
+
+canvas{
+    background:black;
+    border:1px solid white;
+    margin:15px auto;
+    display:block;
+}
+
+.box{
+    width:15px;
+    height:15px;
+    display:inline-block;
+}
+</style>
+</head>
+<body>
+
+<h1>🎼 Prisme Mathématique de Fourier</h1>
+<p>Son complexe → Décomposition en sons purs</p>
+
+<button onclick="start()">Appliquer le prisme de Fourier</button>
+
+<h2>1️⃣ Son complexe (instrument réel)</h2>
+<canvas id="complexCanvas" width="800" height="150"></canvas>
+
+<h2>2️⃣ Décomposition en sons purs</h2>
+<canvas id="pureCanvas" width="800" height="150"></canvas>
+
+<h2>3️⃣ Spectre fréquentiel</h2>
+<canvas id="freqCanvas" width="800" height="150"></canvas>
+
+<p>
+<span class="box" style="background:lime"></span> Fondamentale  
+&nbsp;&nbsp;
+<span class="box" style="background:orange"></span> Harmoniques
+</p>
+<a href="piano-violent.html" class="nav-btn">Suivant </a>
+<script>
+const N = 800;
+let phase = 0;
+let step = 0;
+
+const components = [
+    {freq:2, amp:1, color:"lime", type:"Fondamentale"},
+    {freq:4, amp:0.6, color:"orange", type:"Harmonique 2"},
+    {freq:6, amp:0.4, color:"orange", type:"Harmonique 3"},
+    {freq:8, amp:0.3, color:"orange", type:"Harmonique 4"}
+];
+
+let animation;
+
+function start(){
+    cancelAnimationFrame(animation);
+    phase = 0;
+    step = 0;
+    animate();
+}
+
+function animate(){
+    phase += 0.05;
+    drawComplex();
+    drawPure();
+    drawSpectrum();
+    animation = requestAnimationFrame(animate);
+}
+
+function drawComplex(){
+    let ctx = complexCanvas.getContext("2d");
+    ctx.clearRect(0,0,800,150);
+    ctx.beginPath();
+    ctx.strokeStyle="white";
+
+    for(let x=0;x<N;x++){
+        let t = x/100;
+        let sum = 0;
+        components.forEach(c=>{
+            sum += c.amp*Math.sin(2*Math.PI*c.freq*t + phase);
+        });
+
+        let y = 75 - sum*40;
+        x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+}
+
+function drawPure(){
+    let ctx = pureCanvas.getContext("2d");
+    ctx.clearRect(0,0,800,150);
+
+    // apparition progressive des composantes
+    if(step < components.length && Math.random()<0.02){
+        step++;
+    }
+
+    for(let i=0;i<step;i++){
+        let c = components[i];
+        ctx.beginPath();
+        ctx.strokeStyle = c.color;
+
+        for(let x=0;x<N;x++){
+            let t = x/100;
+            let y = 75 - c.amp*Math.sin(2*Math.PI*c.freq*t + phase)*40;
+            x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+        }
+        ctx.stroke();
+    }
+}
+
+function drawSpectrum(){
+    let ctx = freqCanvas.getContext("2d");
+    ctx.clearRect(0,0,800,150);
+
+    components.forEach(c=>{
+        let x = c.freq*50;
+        let height = c.amp*100;
+
+        ctx.fillStyle = c.color;
+        ctx.fillRect(x,150-height,20,height);
+
+        ctx.fillStyle="white";
+        ctx.fillText(c.type, x, 140-height);
+        ctx.fillText(c.freq+" f₀", x, 145);
+    });
+}
+</script>
+
+</body>
+</html>
+
+
+

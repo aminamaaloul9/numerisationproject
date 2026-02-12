@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide Vidéo</title>
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(120deg,#e0f7fa,#a5d6a7);
+    color:#000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    height:100vh;
+}
+
+.slide{
+    width:95%;
+    height:94%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+h1{
+    font-size:3em;
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.subtitle{
+    text-align:center;
+    font-size:1.3em;
+    opacity:0.9;
+    margin-bottom:20px;
+}
+
+.video-container{
+    width:80%;
+    max-width:1000px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.25);
+    border-radius:15px;
+    overflow:hidden;
+}
+
+video{
+    width:100%;
+    height:auto;
+    display:block;
+}
+
+.next-btn{
+    margin:20px auto 5px;
+    padding:12px 30px;
+    border:none;
+    border-radius:30px;
+    background:#00796b;
+    color:white;
+    font-size:1.1em;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.next-btn:hover{
+    background:#004d40;
+    transform:scale(1.05);
+}
+
+.footer{
+    text-align:center;
+    font-size:1em;
+    opacity:0.85;
+    margin-top:10px;
+}
+</style>
+</head>
+<body>
+
+<div class="slide">
+
+    <h1>🎬 Regardez cette vidéo</h1>
+    <div class="subtitle">
+        Exemple de vidéo intégrée à la présentation
+    </div>
+
+    <div class="video-container">
+        <video controls autoplay loop>
+            <source src="your-video.mp4" type="video/mp4">
+            Votre navigateur ne supporte pas la vidéo.
+        </video>
+    </div>
+
+    <button class="next-btn" onclick="location.href='thankyou.html'">
+        suivant
+    </button>
+
+    <div class="footer">
+        Vous pouvez lire, mettre en pause ou passer en plein écran 🎥
+    </div>
+
+</div>
+
+</body>
+</html>
